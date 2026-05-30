@@ -1,5 +1,6 @@
 from app.services.loader import load_document
 from app.services.splitter import split_text
+from app.services.embedding import get_embeddings
 
 
 def process_document(file_path: str):
@@ -7,8 +8,12 @@ def process_document(file_path: str):
 
     chunks = split_text(text)
 
+    vectors = get_embeddings(chunks)
+
     return {
         "total_length": len(text),
         "chunk_count": len(chunks),
-        "chunks": chunks[:3]
+        "embedding_dim": len(vectors[0]),
+        "chunks": chunks[:3],
+        "vectors": vectors[0][:3]
     }

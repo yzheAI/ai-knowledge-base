@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 from app.config import UPLOAD_DIR
-from app.services.pipeline import process_document
+from app.services.embedding import get_embedding
+from app.services.pipeline import process_document, vector_store
 import os
 
 
@@ -23,4 +24,13 @@ async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型
         "analysis": result
     }
 
+
+@router.post('/search')
+async def read_file(query: str):
+    query_embedding = get_embedding(query)
+    result = vector_store.search(
+        query_embedding,
+        top_k=3
+    )
+    return result
 

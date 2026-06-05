@@ -1,7 +1,8 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Query
 from app.config import UPLOAD_DIR
 from app.services.embedding import get_embedding
-from app.services.pipeline import process_document, vector_store
+from app.services.pipeline import process_document
+from app.services.store import vector_store
 import os
 
 
@@ -18,6 +19,7 @@ async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型
         f.write(content)
 
     result = process_document(file_path)
+    vector_store.add(result["vectors"], result["chunks"])
     return {
         "filename": file.filename,
         "msg": "上传成功",
@@ -26,7 +28,10 @@ async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型
 
 
 @router.post('/search')
-async def read_file(query: str):
+async def read_file(query: str = Query(...)):
+    if not vector_store.texts:
+        return {"query": query, "results": [], "msg": "向量库为空，请先上传文档"}
+
     query_embedding = get_embedding(query)
     result = vector_store.search(
         query_embedding,

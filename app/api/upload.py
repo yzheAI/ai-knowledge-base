@@ -40,3 +40,12 @@ async def read_file(query: str = Query(...)):
     )
     return result
 
+
+@router.get('/')
+async def get_files():
+    files = os.listdir(UPLOAD_DIR)
+    return {
+        "count": len(files),
+        "files": files
+    }
+

@@ -20,6 +20,7 @@ async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型
 
     result = process_document(file_path)
     vector_store.add(result["vectors"], result["chunks"])
+    vector_store.save()
     return {
         "filename": file.filename,
         "msg": "上传成功",

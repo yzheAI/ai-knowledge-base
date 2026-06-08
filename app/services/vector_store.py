@@ -1,5 +1,9 @@
 import faiss
 import numpy as np
+import pickle
+import os
+
+from app.config import INDEX_PATH, TEXT_PATH
 
 
 # 封装FAISS，实现 存向量+存原文+搜相似文本
@@ -27,3 +31,17 @@ class VectorStore:
                 results.append(self.texts[i])
 
         return results
+
+    def save(self, index_path=INDEX_PATH, texts_path=TEXT_PATH):
+        os.makedirs("data", exist_ok=True)
+        faiss.write_index(self.index, index_path)
+        with open(texts_path, "wb") as f:
+            pickle.dump(self.texts, f)
+
+    def load(self, index_path=INDEX_PATH, texts_path=TEXT_PATH):
+        if os.path.exists(index_path):
+            self.index = faiss.read_index(index_path)
+
+        if os.path.exists(texts_path):
+            with open(texts_path, "rb") as f:
+                self.texts = pickle.load(f)

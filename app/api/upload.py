@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Query
 from app.config import UPLOAD_DIR
 from app.services.embedding import get_embedding
+from app.services.llm import chat_with_qwen
 from app.services.pipeline import process_document
 from app.services.store import vector_store
 import os
@@ -49,3 +50,28 @@ async def get_files():
         "files": files
     }
 
+
+@router.post('/chat')
+async def chat(query: str):
+    query_embedding = get_embedding(query)
+    contexts = vector_store.search(
+        query_embedding,
+        top_k=3
+    )
+    content_text = "\n".join(
+        [ctx["text"] for ctx in contexts]
+    )
+    prompt = f"""
+    请根据给定资料回答问题。
+    资料：
+    {content_text}
+    问题：
+    {query}
+    如果资料中没有答案，请明确说明。
+    """
+    answer = chat_with_qwen(prompt)
+    return {
+        "query": query,
+        "answer": answer,
+        "contexts": contexts,
+    }

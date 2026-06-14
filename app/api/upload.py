@@ -4,6 +4,9 @@ from app.services.embedding import get_embedding
 from app.services.llm import chat_with_qwen
 from app.services.pipeline import process_document
 from app.services.store import vector_store
+from app.schemas.chat import ChatResponse, SourceResponse
+from app.schemas.response_schema import ResponseModel
+from utils.response import success, error
 import os
 
 
@@ -51,7 +54,7 @@ async def get_files():
     }
 
 
-@router.post('/chat')
+@router.post('/chat', response_model=ResponseModel[ChatResponse])
 async def chat(query: str):
     query_embedding = get_embedding(query)
     contexts = vector_store.search(
@@ -70,8 +73,15 @@ async def chat(query: str):
     如果资料中没有答案，请明确说明。
     """
     answer = chat_with_qwen(prompt)
-    return {
+    sources = [
+        SourceResponse(
+            content=ctx["text"],
+            score=ctx["distance"]
+        )
+        for ctx in contexts
+    ]
+    return success({
         "query": query,
         "answer": answer,
-        "contexts": contexts,
-    }
+        "sources": sources
+    })

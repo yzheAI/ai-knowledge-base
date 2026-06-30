@@ -22,7 +22,10 @@ async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型
         content = await file.read()  # 异步读取用户上传的文件内容
         f.write(content)
 
-    result = process_document(file_path)
+    try:
+        result = process_document(file_path)
+    except ValueError as e:
+        return error(str(e), code=400)
     vector_store.add(result["vectors"], result["chunks"])
     vector_store.save()
     return {

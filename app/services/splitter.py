@@ -1,9 +1,19 @@
-def split_text(text: str, chunk_size: int = 500, overlap: int = 100):
+def split_text(text: str, chunk_size: int = 200):
+    sentences = text.split("。")
     chunks = []
-    start = 0
-    length = len(text)
-    while start < length:
-        end = start + chunk_size
-        chunks.append(text[start:end])
-        start = end - overlap  # 重叠部分
+
+    current = ""
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if not sentence:
+            continue
+
+        if len(current)+len(sentence) <= chunk_size:
+            current += sentence + "。"
+        else:
+            chunks.append(current)
+            current = sentence + "。"
+    if current:
+        chunks.append(current)
+
     return chunks

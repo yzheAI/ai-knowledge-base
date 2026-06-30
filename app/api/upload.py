@@ -7,6 +7,7 @@ from app.services.store import vector_store
 from app.schemas.chat import ChatResponse, SourceResponse
 from app.schemas.response_schema import ResponseModel
 from utils.response import success, error
+import uuid
 import os
 
 
@@ -26,7 +27,13 @@ async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型
         result = process_document(file_path)
     except ValueError as e:
         return error(str(e), code=400)
-    vector_store.add(result["vectors"], result["chunks"])
+    doc_id = str(uuid.uuid4())
+    vector_store.add(
+        result["vectors"],
+        result["chunks"],
+        doc_id=doc_id,
+        source=file.filename
+    )
     vector_store.save()
     return {
         "filename": file.filename,
@@ -37,7 +44,7 @@ async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型
 
 @router.post('/search')
 async def read_file(query: str = Query(...)):
-    if not vector_store.texts:
+    if not vector_store.data:
         return {"query": query, "results": [], "msg": "向量库为空，请先上传文档"}
 
     query_embedding = get_embedding(query)
@@ -48,7 +55,7 @@ async def read_file(query: str = Query(...)):
     return result
 
 
-@router.get('/')
+@router.get('/files_message')
 async def get_files():
     files = os.listdir(UPLOAD_DIR)
     return {
@@ -79,7 +86,8 @@ async def chat(query: str):
     sources = [
         SourceResponse(
             content=ctx["text"],
-            score=ctx["distance"]
+            score=ctx["distance"],
+            filename=ctx["source"]
         )
         for ctx in contexts
     ]

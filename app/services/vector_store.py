@@ -11,16 +11,22 @@ class VectorStore:
 
     def __init__(self, dim: int):
         self.index = faiss.IndexFlatL2(dim)  # L2距离
-        self.texts = []
+        self.data = []
 
     # 添加文本与向量
-    def add(self, embeddings, texts):
+    def add(self, embeddings, texts, doc_id, source):
         embeddings = np.array(embeddings).astype("float32")  # 转成FAISS需要的格式
 
         if len(embeddings.shape) == 1:
             embeddings = embeddings.reshape(1, -1)
         self.index.add(embeddings)  # 向量存入索引
-        self.texts.extend(texts)  # 原文存入列表
+        for i, text in enumerate(texts):
+            self.data.append({
+                "text": text,
+                "doc_id": doc_id,
+                "chunk_id": i,
+                "source": source
+            })
 
     def search(self, query_embedding, top_k=3):
         query_embedding = np.array([query_embedding]).astype("float32")
@@ -29,9 +35,12 @@ class VectorStore:
         for distance, idx in zip(distances[0], indices[0]):
             if idx == -1:
                 continue
+            item = self.data[idx]
 
             results.append({
-                "text": self.texts[idx],
+                "text": item["text"],
+                "doc_id": item["doc_id"],
+                "source": item["source"],
                 "distance": float(distance),
             })
 
@@ -41,7 +50,7 @@ class VectorStore:
         os.makedirs("data", exist_ok=True)
         faiss.write_index(self.index, index_path)
         with open(texts_path, "wb") as f:
-            pickle.dump(self.texts, f)
+            pickle.dump(self.data, f)
 
     def load(self, index_path=INDEX_PATH, texts_path=TEXT_PATH):
         if os.path.exists(index_path):
@@ -49,4 +58,4 @@ class VectorStore:
 
         if os.path.exists(texts_path):
             with open(texts_path, "rb") as f:
-                self.texts = pickle.load(f)
+                self.data = pickle.load(f)

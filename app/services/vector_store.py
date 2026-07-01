@@ -11,7 +11,7 @@ class VectorStore:
 
     def __init__(self, dim: int):
         # IDMap 包装
-        base_index = faiss.IndexFlatL2(dim)  # L2距离
+        base_index = faiss.IndexFlatIP(dim)
         self.index = faiss.IndexIDMap(base_index)
 
         self.data = {}

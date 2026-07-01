@@ -2,7 +2,9 @@
 
 ## 项目简介
 基于 FastAPI 的轻量级知识库系统，实现文档上传、PDF/TXT解析、chunk切分的数据处理流程。
-并通过 SentenceTransformer 生成向量表示，使用 FAISS 构建向量索引，实现高效语义检索，最终结合大语言模型生成回答
+并通过 SentenceTransformer 生成向量表示，使用 FAISS 构建向量索引，
+在检索阶段，系统采用 **归一化 embedding + cosine similarity（FAISS Inner Product）** 实现语义检索，
+并结合大语言模型（Qwen）生成最终回答，实现“检索增强生成”的完整闭环。
 
 ## 功能
 - 文件上传（PDF / TXT）
@@ -20,6 +22,7 @@
 - SentenceTransformers（文本向量化）
 - FAISS（向量检索） 
 - OpenAI Compatible API（Qwen）
+- Pickle（本地持久化）
 
 
 ## 启动方式

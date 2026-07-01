@@ -10,8 +10,12 @@ from app.config import INDEX_PATH, TEXT_PATH
 class VectorStore:
 
     def __init__(self, dim: int):
-        self.index = faiss.IndexFlatL2(dim)  # L2距离
-        self.data = []
+        # IDMap 包装
+        base_index = faiss.IndexFlatL2(dim)  # L2距离
+        self.index = faiss.IndexIDMap(base_index)
+
+        self.data = {}
+        self.next_id = 0  # 全局变量
 
     # 添加文本与向量
     def add(self, embeddings, texts, doc_id, source):
@@ -19,14 +23,21 @@ class VectorStore:
 
         if len(embeddings.shape) == 1:
             embeddings = embeddings.reshape(1, -1)
-        self.index.add(embeddings)  # 向量存入索引
-        for i, text in enumerate(texts):
-            self.data.append({
+
+        # 索引范围
+        ids = np.arange(self.next_id, self.next_id + len(texts))
+        self.next_id += len(texts)
+
+        # index 添加向量和显式索引
+        self.index.add_with_ids(embeddings, ids)
+        for i, text in zip(ids, texts):
+            # 使用字典，data[i]（i唯一）存放信息
+            self.data[int(i)] = {
                 "text": text,
                 "doc_id": doc_id,
-                "chunk_id": i,
-                "source": source
-            })
+                "source": source,
+                "chunk_id": int(i)
+            }
 
     def search(self, query_embedding, top_k=3):
         query_embedding = np.array([query_embedding]).astype("float32")
@@ -35,7 +46,9 @@ class VectorStore:
         for distance, idx in zip(distances[0], indices[0]):
             if idx == -1:
                 continue
-            item = self.data[idx]
+            item = self.data.get(int(idx))
+            if not item:
+                continue
 
             results.append({
                 "text": item["text"],
@@ -50,7 +63,10 @@ class VectorStore:
         os.makedirs("data", exist_ok=True)
         faiss.write_index(self.index, index_path)
         with open(texts_path, "wb") as f:
-            pickle.dump(self.data, f)
+            pickle.dump({
+                "data": self.data,
+                "next_id": self.next_id
+            }, f)
 
     def load(self, index_path=INDEX_PATH, texts_path=TEXT_PATH):
         if os.path.exists(index_path):
@@ -58,4 +74,6 @@ class VectorStore:
 
         if os.path.exists(texts_path):
             with open(texts_path, "rb") as f:
-                self.data = pickle.load(f)
+                obj = pickle.load(f)
+                self.data = obj["data"]
+                self.next_id = obj["next_id"]

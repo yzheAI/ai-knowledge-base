@@ -58,10 +58,23 @@ async def read_file(query: str = Query(...)):
 
 @router.get('/files_message')
 async def get_files():
-    files = os.listdir(UPLOAD_DIR)
+    # files = os.listdir(UPLOAD_DIR)
+    docs = {}
+    for item in vector_store.data.values():
+        doc_id = item["doc_id"]
+        source = item["source"]
+
+        if doc_id not in docs:
+            docs[doc_id] = {
+                "doc_id": doc_id,
+                "source": source,
+                "chunk_count": 1
+            }
+        else:
+            docs[doc_id]["chunk_count"] += 1
     return {
-        "count": len(files),
-        "files": files
+        "count": len(docs),
+        "files": list(docs.values())
     }
 
 
@@ -98,3 +111,11 @@ async def chat(query: str):
         "answer": answer,
         "sources": sources
     })
+
+
+@router.delete("/{doc_id}")
+async def delete_file(doc_id: str):
+    success_flag = vector_store.delete(doc_id)
+    if not success_flag:
+        return error("文档不存在", code=404)
+    return success(msg="删除成功")

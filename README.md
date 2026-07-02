@@ -14,6 +14,7 @@
 - 向量检索（FAISS）
 - 基于检索内容的 LLM 问答（Qwen）
 - 检索结果与原文映射（source tracking）
+- 删除文档
 
 ## 技术栈
 - FastAPI

@@ -77,3 +77,20 @@ class VectorStore:
                 obj = pickle.load(f)
                 self.data = obj["data"]
                 self.next_id = obj["next_id"]
+
+    def delete(self, doc_id):
+        ids = []
+        for chunk_id, item in self.data.items():
+            if item["doc_id"] == doc_id:
+                ids.append(chunk_id)
+        if not ids:
+            return False
+        # 一次性删除FAISS的内容
+        ids_array = np.array(ids).astype("int64")
+        self.index.remove_ids(ids_array)
+        # 循环删除text的内容
+        for chunk_id in ids:
+            self.data.pop(chunk_id, None)
+        # 保存索引
+        self.save()
+        return True

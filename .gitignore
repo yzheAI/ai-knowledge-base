@@ -6,3 +6,5 @@ data/uploads/
 .vscode/
 .DS_Store
 data/
+temp.py
+models/

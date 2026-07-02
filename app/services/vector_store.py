@@ -15,7 +15,7 @@ class VectorStore:
         self.index = faiss.IndexIDMap(base_index)
 
         self.data = {}
-        self.next_id = 0  # 全局变量
+        self.next_id = 0  # 全局唯一ID分配器的状态变量,生成起点
 
     # 添加文本与向量
     def add(self, embeddings, texts, doc_id, source):
@@ -29,7 +29,7 @@ class VectorStore:
         self.next_id += len(texts)
 
         # index 添加向量和显式索引
-        self.index.add_with_ids(embeddings, ids)
+        self.index.add_with_ids(embeddings, ids)  # 存入 list[list[float]] 和 list[int]，每个向量对应一个序号
         for i, text in zip(ids, texts):
             # 使用字典，data[i]（i唯一）存放信息
             self.data[int(i)] = {

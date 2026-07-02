@@ -7,6 +7,7 @@ from app.services.store import vector_store
 from app.schemas.chat import ChatResponse, SourceResponse
 from app.schemas.response_schema import ResponseModel
 from utils.response import success, error
+from app.services.rerank import rerank
 import uuid
 import os
 
@@ -69,8 +70,9 @@ async def chat(query: str):
     query_embedding = get_embedding(query)
     contexts = vector_store.search(
         query_embedding,
-        top_k=3
+        top_k=10
     )
+    contexts = rerank(query, contexts, top_k=3)
     content_text = "\n".join(
         [ctx["text"] for ctx in contexts]
     )
@@ -80,7 +82,7 @@ async def chat(query: str):
     {content_text}
     问题：
     {query}
-    如果资料中没有答案，请明确说明。
+    如果资料不足，请回答：未在知识库中找到相关信息。
     """
     answer = chat_with_qwen(prompt)
     sources = [

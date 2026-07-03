@@ -90,7 +90,7 @@ class VectorStore:
         self.index.remove_ids(ids_array)
         # 循环删除text的内容
         for chunk_id in ids:
-            self.data.pop(chunk_id, None)
+            self.data.pop(chunk_id, None)  # None: chunk_id不存在时不报错
         # 保存索引
         self.save()
         return True

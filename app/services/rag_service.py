@@ -1,10 +1,8 @@
 from app.embedding.embedding import get_embedding
 from app.llm.qwen import chat_with_qwen
 from app.prompts.rag_prompt import build_prompt
-from app.retriever.rerank import rerank
 from app.retriever.retriever import retrieve
 from app.schemas.chat import SourceResponse
-from app.vector_store.faiss_store import vector_store
 
 
 async def chat_service(query: str):

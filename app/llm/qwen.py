@@ -1,4 +1,5 @@
 from openai import OpenAI, APITimeoutError, APIError
+from app.exceptions.exceptions import LLMTimeoutError, LLMServiceError
 from app.config import API_KEY
 
 
@@ -21,8 +22,8 @@ def chat_with_qwen(prompt: str):
         )
         return response.choices[0].message.content
     except APITimeoutError:
-        return "LLM请求超时，请稍后再试"
+        raise LLMTimeoutError()
     except APIError:
-        return "LLM服务异常"
-    except Exception as e:
-        return f"未知错误：{str(e)}"
+        raise LLMServiceError()
+    except Exception:
+        raise LLMServiceError("LLM未知错误")

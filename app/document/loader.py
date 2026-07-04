@@ -1,5 +1,6 @@
 from pathlib import Path
 from PyPDF2 import PdfReader
+from app.exceptions.exceptions import UnsupportedDocumentType
 
 
 def load_txt(file_path: str) -> str:
@@ -23,5 +24,5 @@ def load_document(file_path: str) -> str:
     elif ext == ".pdf":
         return load_pdf(file_path)
     else:
-        raise ValueError(f"Unsupported file type: {ext}")
+        raise UnsupportedDocumentType(f"Unsupported file type: {ext}")
 

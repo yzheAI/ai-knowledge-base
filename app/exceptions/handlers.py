@@ -1,0 +1,78 @@
+from fastapi import Request
+from starlette.responses import JSONResponse
+from app.exceptions.exceptions import (DocumentNotFound, UnsupportedDocumentType, DocumentEmptyError, LLMTimeoutError,
+                                       LLMServiceError, KnowledgeBaseEmptyError)
+
+
+def register_exception_handlers(app):
+
+    @app.exception_handler(DocumentNotFound)
+    async def not_found_handler(request: Request, exc: DocumentNotFound):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "code": 404,
+                "message": exc.message
+            }
+        )
+
+    @app.exception_handler(UnsupportedDocumentType)
+    async def unsupported_handler(request: Request, exc: UnsupportedDocumentType):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "code": 400,
+                "message": exc.message
+            }
+        )
+
+    @app.exception_handler(DocumentEmptyError)
+    async def document_empty_handler(request: Request, exc: DocumentEmptyError):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "code": 400,
+                "message": exc.message
+            }
+        )
+
+    @app.exception_handler(LLMTimeoutError)
+    async def llm_timeout_handler(request: Request, exc: LLMTimeoutError):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "code": 400,
+                "message": exc.message
+            }
+        )
+
+    @app.exception_handler(LLMServiceError)
+    async def llm_service_error_handler(request: Request, exc: LLMServiceError):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "code": 400,
+                "message": exc.message
+            }
+        )
+
+    @app.exception_handler(KnowledgeBaseEmptyError)
+    async def knowledge_base_empty_handler(request: Request, exc: KnowledgeBaseEmptyError):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "code": 404,
+                "message": exc.message
+            }
+        )
+
+    @app.exception_handler(Exception)
+    async def exception_handler(request: Request, exc: Exception):
+        return JSONResponse(
+            status_code=500,
+            content={
+                "code": 500,
+                "message": "Internal Server Error"
+            }
+        )
+

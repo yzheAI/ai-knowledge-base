@@ -3,8 +3,8 @@ import uuid
 from app.config import UPLOAD_DIR
 from app.document.pipeline import process_document
 from app.embedding.embedding import get_embedding
+from app.exceptions.exceptions import DocumentNotFound, KnowledgeBaseEmptyError
 from app.vector_store.faiss_store import vector_store
-from utils.response import error, success
 
 
 async def upload(file):
@@ -33,8 +33,7 @@ async def upload(file):
 
 async def search_files(query: str):
     if not vector_store.data:
-        return {"query": query, "results": [], "msg": "向量库为空，请先上传文档"}
-
+        raise KnowledgeBaseEmptyError()
     query_embedding = get_embedding(query)
     result = vector_store.search(
         query_embedding,
@@ -66,5 +65,5 @@ async def get_all_files():
 async def file_delete(doc_id):
     success_flag = vector_store.delete(doc_id)
     if not success_flag:
-        return error("文档不存在", code=404)
-    return success(msg="删除成功")
+        raise DocumentNotFound(message="文档不存在")
+    return success_flag

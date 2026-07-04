@@ -1,6 +1,6 @@
-from app.services.loader import load_document
-from app.services.splitter import split_text, clean_chunks
-from app.services.embedding import get_embeddings
+from app.document.loader import load_document
+from app.document.splitter import split_text, clean_chunks
+from app.embedding.embedding import get_embeddings
 
 
 def process_document(file_path: str):

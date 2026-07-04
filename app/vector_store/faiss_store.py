@@ -94,3 +94,7 @@ class VectorStore:
         # 保存索引
         self.save()
         return True
+
+
+vector_store = VectorStore(384)
+vector_store.load()

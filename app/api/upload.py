@@ -1,22 +1,22 @@
 from fastapi import APIRouter, UploadFile, File, Query
 from app.config import UPLOAD_DIR
-from app.services.embedding import get_embedding
-from app.services.llm import chat_with_qwen
-from app.services.pipeline import process_document
-from app.services.store import vector_store
+from app.embedding.embedding import get_embedding
+from app.llm.qwen import chat_with_qwen
+from app.document.pipeline import process_document
+from app.vector_store.faiss_store import vector_store
 from app.schemas.chat import ChatResponse, SourceResponse
 from app.schemas.response_schema import ResponseModel
 from utils.response import success, error
-from app.services.rerank import rerank
+from app.retriever.rerank import rerank
 import uuid
 import os
 
 
-router = APIRouter(prefix="/files", tags=["文件上传"])
+upload_router = APIRouter(prefix="/files", tags=["文件上传"])
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
-@router.post('/')
+@upload_router.post('/')
 async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型，参数必须传
     # 上传文档
     file_path = os.path.join(UPLOAD_DIR, file.filename)  # 拼接路径
@@ -43,7 +43,7 @@ async def upload_file(file: UploadFile = File(...)):  # 表示文件上传类型
     }
 
 
-@router.post('/search')
+@upload_router.post('/search')
 async def read_file(query: str = Query(...)):
     if not vector_store.data:
         return {"query": query, "results": [], "msg": "向量库为空，请先上传文档"}
@@ -56,7 +56,7 @@ async def read_file(query: str = Query(...)):
     return result
 
 
-@router.get('/files_message')
+@upload_router.get('/files_message')
 async def get_files():
     # files = os.listdir(UPLOAD_DIR)
     docs = {}
@@ -78,7 +78,7 @@ async def get_files():
     }
 
 
-@router.post('/chat', response_model=ResponseModel[ChatResponse])
+@upload_router.post("/chat")
 async def chat(query: str):
     query_embedding = get_embedding(query)
     contexts = vector_store.search(
@@ -113,7 +113,7 @@ async def chat(query: str):
     })
 
 
-@router.delete("/{doc_id}")
+@upload_router.delete("/{doc_id}")
 async def delete_file(doc_id: str):
     success_flag = vector_store.delete(doc_id)
     if not success_flag:

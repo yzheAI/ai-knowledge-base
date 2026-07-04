@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from app.api.upload import router as upload_router
+from app.api.upload import upload_router as upload_router
 app = FastAPI(title="AI知识库助手")
 app.include_router(upload_router)
 if __name__ == '__main__':

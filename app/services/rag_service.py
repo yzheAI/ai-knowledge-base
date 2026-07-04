@@ -1,28 +1,25 @@
 from app.embedding.embedding import get_embedding
 from app.llm.qwen import chat_with_qwen
+from app.prompts.rag_prompt import build_prompt
 from app.retriever.rerank import rerank
+from app.retriever.retriever import retrieve
 from app.schemas.chat import SourceResponse
 from app.vector_store.faiss_store import vector_store
 
 
 async def chat_service(query: str):
-    query_embedding = get_embedding(query)
-    contexts = vector_store.search(
-        query_embedding,
-        top_k=10
+    contexts = retrieve(
+        query,
+        search_top_k=10,
+        rerank_top_k=3
     )
-    contexts = rerank(query, contexts, top_k=3)
     content_text = "\n".join(
         [ctx["text"] for ctx in contexts]
     )
-    prompt = f"""
-        请根据给定资料回答问题。
-        资料：
-        {content_text}
-        问题：
-        {query}
-        如果资料不足，请回答：未在知识库中找到相关信息。
-        """
+    prompt = build_prompt(
+        query,
+        content_text
+    )
     answer = chat_with_qwen(prompt)
     sources = [
         SourceResponse(

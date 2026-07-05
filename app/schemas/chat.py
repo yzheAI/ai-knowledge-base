@@ -4,7 +4,7 @@ from pydantic import BaseModel
 class SourceResponse(BaseModel):
     content: str
     score: float
-    filename: str
+    metadata: dict
 
 
 class ChatResponse(BaseModel):

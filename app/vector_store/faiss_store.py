@@ -18,7 +18,7 @@ class VectorStore:
         self.next_id = 0  # 全局唯一ID分配器的状态变量,生成起点
 
     # 添加文本与向量
-    def add(self, embeddings, texts, doc_id, source):
+    def add(self, embeddings, texts, doc_id, metadata):
         embeddings = np.array(embeddings).astype("float32")  # 转成FAISS需要的格式
 
         if len(embeddings.shape) == 1:
@@ -35,8 +35,8 @@ class VectorStore:
             self.data[int(i)] = {
                 "text": text,
                 "doc_id": doc_id,
-                "source": source,
-                "chunk_id": int(i)
+                "chunk_id": int(i),
+                "metadata": metadata
             }
 
     def search(self, query_embedding, top_k=3):
@@ -53,8 +53,8 @@ class VectorStore:
             results.append({
                 "text": item["text"],
                 "doc_id": item["doc_id"],
-                "source": item["source"],
                 "distance": float(distance),
+                "metadata": item["metadata"]
             })
 
         return results

@@ -1,5 +1,7 @@
 import os
 import uuid
+from datetime import datetime
+
 from app.config import UPLOAD_DIR
 from app.document.pipeline import process_document
 from app.embedding.embedding import get_embedding
@@ -15,13 +17,18 @@ async def upload(file):
         f.write(content)
 
     result = process_document(str(file_path))
+    metadata = {
+        "source": file.filename,
+        "file_type": result["file_type"],
+        "upload_time": datetime.now().isoformat()
+    }
 
     doc_id = str(uuid.uuid4())
     vector_store.add(
         result["vectors"],
         result["chunks"],
         doc_id=doc_id,
-        source=file.filename
+        metadata=metadata
     )
     vector_store.save()
     return {
@@ -46,12 +53,12 @@ async def get_all_files():
     docs = {}
     for item in vector_store.data.values():
         doc_id = item["doc_id"]
-        source = item["source"]
+        metadata = item["metadata"]
 
         if doc_id not in docs:
             docs[doc_id] = {
                 "doc_id": doc_id,
-                "source": source,
+                "metadata": metadata,
                 "chunk_count": 1
             }
         else:

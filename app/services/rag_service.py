@@ -1,4 +1,3 @@
-from app.embedding.embedding import get_embedding
 from app.llm.qwen import chat_with_qwen
 from app.prompts.rag_prompt import build_prompt
 from app.retriever.retriever import retrieve
@@ -23,7 +22,7 @@ async def chat_service(query: str):
         SourceResponse(
             content=ctx["text"],
             score=ctx["distance"],
-            filename=ctx["source"]
+            metadata=ctx["metadata"]
         )
         for ctx in contexts
     ]

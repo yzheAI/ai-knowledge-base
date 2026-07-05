@@ -17,6 +17,9 @@ def process_document(file_path: str):
         raise DocumentEmptyError("无有效chunk")
 
     vectors = get_embeddings(chunk_cleaned)
+    metadata = {
+        "file_type": ext,
+    }
 
     return {
         "total_length": len(text),
@@ -24,5 +27,5 @@ def process_document(file_path: str):
         "embedding_dim": len(vectors[0]),
         "chunks": chunk_cleaned,
         "vectors": vectors,
-        "file_type": ext
+        "metadata": metadata
     }

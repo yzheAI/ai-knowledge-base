@@ -4,6 +4,7 @@ import pickle
 import os
 
 from app.config import INDEX_PATH, TEXT_PATH
+from app.retriever.bm25 import bm25_retriever
 
 
 # 封装FAISS，实现 存向量+存原文+搜相似文本
@@ -16,6 +17,7 @@ class VectorStore:
 
         self.data = {}
         self.next_id = 0  # 全局唯一ID分配器的状态变量,生成起点
+        self.texts = []
 
     # 添加文本与向量
     def add(self, embeddings, texts, doc_id, metadata):
@@ -23,6 +25,9 @@ class VectorStore:
 
         if len(embeddings.shape) == 1:
             embeddings = embeddings.reshape(1, -1)
+
+        self.texts.extend(texts)
+        bm25_retriever.build(self.texts)
 
         # 索引范围
         ids = np.arange(self.next_id, self.next_id + len(texts))
@@ -77,6 +82,12 @@ class VectorStore:
                 obj = pickle.load(f)
                 self.data = obj["data"]
                 self.next_id = obj["next_id"]
+        # 恢复 texts
+        self.texts = [item["text"] for item in self.data.values()]
+
+        # 重建 BM25
+        if self.texts:
+            bm25_retriever.build(self.texts)
 
     def delete(self, doc_id):
         ids = []

@@ -17,11 +17,11 @@ async def upload(file):
         f.write(content)
 
     result = process_document(str(file_path))
-    metadata = {
+    metadata = result["metadata"]
+    metadata.update({
         "source": file.filename,
-        "file_type": result["file_type"],
         "upload_time": datetime.now().isoformat()
-    }
+    })
 
     doc_id = str(uuid.uuid4())
     vector_store.add(

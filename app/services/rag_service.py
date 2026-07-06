@@ -4,11 +4,12 @@ from app.retriever.retriever import retrieve
 from app.schemas.chat import SourceResponse
 
 
-async def chat_service(query: str):
+async def chat_service(query: str, filters: dict | None):
     contexts = retrieve(
         query,
         search_top_k=10,
-        rerank_top_k=3
+        rerank_top_k=3,
+        filters=filters,
     )
     content_text = "\n".join(
         [ctx["text"] for ctx in contexts]

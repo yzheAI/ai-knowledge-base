@@ -44,7 +44,7 @@ class VectorStore:
                 "metadata": metadata
             }
 
-    def search(self, query_embedding, top_k=3):
+    def search(self, query_embedding, top_k=3, filters: dict | None = None):
         query_embedding = np.array([query_embedding]).astype("float32")
         distances, indices = self.index.search(query_embedding, top_k)
         results = []
@@ -54,6 +54,15 @@ class VectorStore:
             item = self.data.get(int(idx))
             if not item:
                 continue
+            if filters:
+                metadata = item["metadata"]
+                # 逐个判断，若全为True则返回True
+                matched = all(
+                    metadata.get(k) == v
+                    for k, v in filters.items()
+                )
+                if not matched:
+                    continue
 
             results.append({
                 "text": item["text"],

@@ -11,12 +11,13 @@ def process_document(file_path: str):
     if not text or len(text.strip()) == 0:
         raise DocumentEmptyError("上传文件为空")
     chunks = split_text(text)
-    ext = Path(file_path).suffix
     chunk_cleaned = clean_chunks(chunks)
     if len(chunk_cleaned) == 0:
         raise DocumentEmptyError("无有效chunk")
 
     vectors = get_embeddings(chunk_cleaned)
+
+    ext = Path(file_path).suffix
     metadata = {
         "file_type": ext,
     }

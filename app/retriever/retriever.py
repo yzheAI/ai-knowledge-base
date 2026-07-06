@@ -8,12 +8,18 @@ def retrieve(
         query: str,
         search_top_k: int = 10,
         rerank_top_k: int = 3,
+        filters=None,
 ):
     query_embedding = get_embedding(query)
+    # 转换成 dict
+    filter_dict = []
+    if filters:
+        filter_dict = filters.model_dump(exclude_none=True)
     # FAISS
     faiss_results = vector_store.search(
         query_embedding,
         top_k=search_top_k,
+        filters=filter_dict,
     )
 
     # BM25（用 index → 转回 text）

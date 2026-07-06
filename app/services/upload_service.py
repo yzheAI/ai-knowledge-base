@@ -15,7 +15,7 @@ async def upload(file):
     with open(file_path, "wb") as f:
         content = await file.read()  # 异步读取用户上传的文件内容
         f.write(content)
-
+    # 获取信息
     result = process_document(str(file_path))
     metadata = result["metadata"]
     metadata.update({

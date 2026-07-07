@@ -2,7 +2,7 @@ import os
 import uuid
 from datetime import datetime
 
-from app.config import UPLOAD_DIR
+from app.config import UPLOAD_DIR, SEARCH_TOP_K
 from app.document.pipeline import process_document
 from app.embedding.embedding import get_embedding
 from app.exceptions.exceptions import DocumentNotFound, KnowledgeBaseEmptyError
@@ -44,7 +44,7 @@ async def search_files(query: str):
     query_embedding = get_embedding(query)
     result = vector_store.search(
         query_embedding,
-        top_k=3
+        top_k=SEARCH_TOP_K
     )
     return result
 

@@ -1,5 +1,5 @@
 from sentence_transformers import CrossEncoder
-
+from app.config import RERANK_MODEL_PATH, DEVICE
 rerank_model = None
 
 
@@ -7,8 +7,8 @@ def get_rerank_model():
     global rerank_model
     if rerank_model is None:
         rerank_model = CrossEncoder(
-            "./models/rerank",
-             device="cpu"
+            RERANK_MODEL_PATH,
+            device=DEVICE
         )
     return rerank_model
 

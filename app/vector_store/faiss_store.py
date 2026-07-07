@@ -44,7 +44,7 @@ class VectorStore:
                 "metadata": metadata
             }
 
-    def search(self, query_embedding, top_k=3, filters: dict | None = None):
+    def search(self, query_embedding, top_k, filters: dict | None = None):
         query_embedding = np.array([query_embedding]).astype("float32")
         distances, indices = self.index.search(query_embedding, top_k)
         results = []

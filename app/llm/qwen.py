@@ -1,11 +1,11 @@
 from openai import OpenAI, APITimeoutError, APIError
 from app.exceptions.exceptions import LLMTimeoutError, LLMServiceError
-from app.config import API_KEY
+from app.config import API_KEY, LLM_BASE_URL
 
 
 client = OpenAI(
     api_key=API_KEY,
-    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
+    base_url=LLM_BASE_URL
 )
 
 

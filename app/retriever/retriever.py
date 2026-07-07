@@ -6,13 +6,13 @@ from app.retriever.bm25 import bm25_retriever
 
 def retrieve(
         query: str,
-        search_top_k: int = 10,
-        rerank_top_k: int = 3,
+        search_top_k: int,
+        rerank_top_k: int,
         filters=None,
 ):
     query_embedding = get_embedding(query)
     # 转换成 dict
-    filter_dict = []
+    filter_dict = {}
     if filters:
         filter_dict = filters.model_dump(exclude_none=True)
     # FAISS
@@ -27,20 +27,20 @@ def retrieve(
     bm25_results = []
     for hit in bm25_hits:
         idx = hit["index"]  # index：序号
-        if idx < len(vector_store.data):
-            item = vector_store.data.get(idx)
-            if item:
-                bm25_results.append({
-                    "text": item["text"],
-                    "doc_id": item["doc_id"],
-                    "distance": hit["bm25_score"],
-                    "metadata": item["metadata"],
-                    "source": item["metadata"].get("source")
-                })
+
+        item = vector_store.data.get(idx)
+        if item:
+            bm25_results.append({
+                "text": item["text"],
+                "doc_id": item["doc_id"],
+                "distance": hit["bm25_score"],
+                "metadata": item["metadata"],
+                "source": item["metadata"].get("source")
+            })
     # 合并
     merged = faiss_results + bm25_results
     # 去重
-    seen = set()
+    seen = set()  # set可以提高效率
     dedup = []
     for item in merged:
         key = item["text"]

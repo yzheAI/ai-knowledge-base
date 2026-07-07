@@ -1,8 +1,9 @@
 from sentence_transformers import SentenceTransformer
+from app.config import EMBEDDING_MODEL
 
 
 # 加载模型
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer(EMBEDDING_MODEL)
 
 
 def get_embedding(text: str):

@@ -1,9 +1,12 @@
 def build_prompt(
         query,
-        content_text
+        content_text,
+        history
 ):
     prompt = f"""
             请根据给定资料回答问题。
+            历史对话：
+            {history}
             资料：
             {content_text}
             问题：

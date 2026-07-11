@@ -1,5 +1,6 @@
 from app.llm.qwen import chat_with_qwen
 from app.memory.conversation_memory import ConversationMemory
+from app.prompts.history_builder import build_history
 from app.prompts.rag_prompt import build_prompt
 from app.retriever.retriever import retrieve
 from app.schemas.chat import SourceResponse
@@ -10,7 +11,7 @@ memory = ConversationMemory()
 
 async def chat_service(query: str, filters: dict | None):
 
-    history = memory.get_history()
+    history = build_history(memory)
 
     contexts = retrieve(
         query,

@@ -16,7 +16,7 @@ def clean_chunks(chunks: list[str]):
     return cleaned
 
 
-def split_text(text: str, chunk_size: int = 200):
+def split_text(text: str, chunk_size: int = 500, overlap: int = 50):
     sentences = text.split("。")
     chunks = []
 
@@ -25,12 +25,18 @@ def split_text(text: str, chunk_size: int = 200):
         sentence = sentence.strip()
         if not sentence:
             continue
+        sentence += "。"
 
         if len(current)+len(sentence) <= chunk_size:
             current += sentence + "。"
         else:
-            chunks.append(current)
-            current = sentence + "。"
+            if current:
+                chunks.append(current)
+                # overlap
+                overlap_text = current[-overlap:]
+
+                current = overlap_text + sentence
+                
     if current:
         chunks.append(current)
 

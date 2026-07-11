@@ -52,4 +52,5 @@ def retrieve(
         dedup,
         top_k=rerank_top_k,
     )
+    print("FAISS数量:", vector_store.index.ntotal)
     return contexts

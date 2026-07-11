@@ -12,6 +12,6 @@ def build_history(memory: ConversationMemory):
         else:
             role = "Assistant"
         line.append(
-            f"{role}: {item['name']}"
+            f"{role}: {item['content']}"
         )
     return "\n".join(line)

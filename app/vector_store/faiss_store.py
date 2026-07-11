@@ -52,9 +52,12 @@ class VectorStore:
             if idx == -1:
                 continue
             item = self.data.get(int(idx))
+
             if not item:
                 continue
             if filters:
+                print("当前filter:", filters)
+
                 metadata = item["metadata"]
                 # 逐个判断，若全为True则返回True
                 matched = all(
@@ -63,6 +66,7 @@ class VectorStore:
                 )
                 if not matched:
                     continue
+                print("matched:", matched)
 
             results.append({
                 "text": item["text"],
@@ -116,5 +120,5 @@ class VectorStore:
         return True
 
 
-vector_store = VectorStore(384)
+vector_store = VectorStore(768)
 vector_store.load()

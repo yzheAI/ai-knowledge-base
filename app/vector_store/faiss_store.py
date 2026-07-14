@@ -101,6 +101,7 @@ class VectorStore:
         # 重建 BM25
         if self.texts:
             bm25_retriever.build(self.texts)
+            bm25_retriever.save()
 
     def delete(self, doc_id):
         ids = []

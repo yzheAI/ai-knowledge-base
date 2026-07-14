@@ -12,3 +12,5 @@ RERANK_MODEL_PATH = "./models/rerank"
 DEVICE = "cpu"
 SEARCH_TOP_K = 10
 RERANK_TOP_K = 3
+BM25_PATH = "app/data/bm25.pkl"
+

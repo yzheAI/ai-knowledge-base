@@ -19,33 +19,6 @@ def clean_chunks(chunks: list[str]):
     return cleaned
 
 
-# def split_text(text: str, chunk_size: int = 500, overlap: int = 50):
-#     sentences = text.split("。")
-#     chunks = []
-#
-#     current = ""
-#     for sentence in sentences:
-#         sentence = sentence.strip()
-#         if not sentence:
-#             continue
-#         sentence += "。"
-#
-#         if len(current)+len(sentence) <= chunk_size:
-#             current += sentence
-#         else:
-#             if current:
-#                 chunks.append(current)
-#                 # overlap
-#                 overlap_text = current[-overlap:]
-#
-#                 current = overlap_text + sentence
-#
-#     if current:
-#         chunks.append(current)
-#
-#     return chunks
-
-
 def split_paragraph(text: str):
     paragraphs = re.split(
         r"\n\s*\n",

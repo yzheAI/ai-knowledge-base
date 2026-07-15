@@ -18,7 +18,7 @@ class RetrieverEvaluator:
             )
 
             if any(
-                item["source"] == r["doc_id"]
+                item["source"] == r["metadata"]["source"]
                 for r in results
             ):
                 hit += 1

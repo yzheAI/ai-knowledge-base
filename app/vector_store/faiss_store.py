@@ -56,8 +56,6 @@ class VectorStore:
             if not item:
                 continue
             if filters:
-                print("当前filter:", filters)
-
                 metadata = item["metadata"]
                 # 逐个判断，若全为True则返回True
                 matched = all(
@@ -66,7 +64,6 @@ class VectorStore:
                 )
                 if not matched:
                     continue
-                print("matched:", matched)
 
             results.append({
                 "text": item["text"],

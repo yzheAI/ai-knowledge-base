@@ -7,7 +7,9 @@ class RetrieverEvaluator:
             self.dataset = json.load(f)
 
     def evaluate(self, retriever):
-        hit = 0
+        recall_1 = 0
+        recall_3 = 0
+        recall_5 = 0
 
         total = len(self.dataset)
 
@@ -19,14 +21,27 @@ class RetrieverEvaluator:
 
             if any(
                 item["source"] == r["metadata"]["source"]
-                for r in results
+                for r in results[:1]
             ):
-                hit += 1
+                recall_1 += 1
+
+            if any(
+                item["source"] == r["metadata"]["source"]
+                for r in results[:3]
+            ):
+                recall_3 += 1
+
+            if any(
+                item["source"] == r["metadata"]["source"]
+                for r in results[:5]
+            ):
+                recall_5 += 1
 
         return {
-            "hit": hit,
             "total": total,
-            "recall@5": hit / total
+            "recall_1": recall_1 / total,
+            "recall_3": recall_3 / total,
+            "recall_5": recall_5 / total
         }
 
 

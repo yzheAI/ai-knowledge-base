@@ -21,6 +21,7 @@
 - 检索结果与原文映射（source tracking）
 - 删除文档
 - 全局异常处理
+- 检索评估
 
 ## 技术栈
 - FastAPI
@@ -32,6 +33,7 @@
 - Pickle（本地持久化）
 - rank-bm25
 - CrossEncoder
+- Retriever Evaluation 测试体系
 
 
 ## 项目结构
@@ -60,6 +62,7 @@ uvicorn main:app --reload
 
 ## 后续计划
 
+- [x] Retriever Recall Evaluation
 - [ ] 多知识库管理
 - [ ] 对话历史（Conversation Memory）
 - [ ] Hybrid Score Fusion

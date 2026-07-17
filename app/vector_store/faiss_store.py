@@ -95,9 +95,14 @@ class VectorStore:
         self.texts = [item["text"] for item in self.data.values()]
 
         # 重建 BM25
-        if self.texts:
+        bm25_path = f"{kb_path}/bm25.pkl"
+
+        if os.path.exists(bm25_path):
+            self.bm25.load(kb_path)
+
+        else:
             self.bm25.build(self.texts)
-            self.bm25.save(f"{kb_path}/bm25.pkl")
+            self.bm25.save(kb_path)
 
     def delete(self, doc_id, kb_path):
         ids = []
@@ -112,6 +117,15 @@ class VectorStore:
         # 循环删除text的内容
         for chunk_id in ids:
             self.data.pop(chunk_id, None)  # None: chunk_id不存在时不报错
+
+        self.texts = [
+            item["text"]
+            for item in self.data.values()
+        ]
+
+        self.bm25.build(self.texts)
+        self.bm25.save(kb_path)
+
         # 保存索引
         self.save(kb_path)
         return True

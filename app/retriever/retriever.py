@@ -5,12 +5,12 @@ from app.core.container import vector_manager
 
 def retrieve(
         query: str,
-        kb_path: str,
+        kb_name: str,
         search_top_k: int,
         rerank_top_k: int,
         filters=None,
 ):
-    store = vector_manager.get_store(kb_path)
+    store = vector_manager.get_store(kb_name)
     query_embedding = get_embedding(query)
     # 转换成 dict
     filter_dict = {}

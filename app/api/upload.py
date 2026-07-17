@@ -36,12 +36,12 @@ async def read_file(
 
 
 @upload_router.get('/files_message')
-async def get_files():
-    result = await get_all_files()
+async def get_files(kb_name):
+    result = await get_all_files(kb_name)
     return success(msg=result)
 
 
 @upload_router.delete("/{doc_id}")
-async def delete_file(doc_id: str):
-    await file_delete(doc_id)
+async def delete_file(doc_id: str, kb_name: str):
+    await file_delete(doc_id, kb_name)
     return success(msg="删除成功")

@@ -2,7 +2,6 @@ from rank_bm25 import BM25Okapi
 import jieba
 import os
 import pickle
-from app.config import BM25_PATH
 
 
 class BM25Retriever:
@@ -37,7 +36,7 @@ class BM25Retriever:
             for idx, score in ranked[:top_k]
         ]
 
-    def save(self, path: str = BM25_PATH):
+    def save(self, path: str):
         data = {
             "corpus": self.corpus,
             "tokenizer": self.tokenizer,
@@ -46,7 +45,7 @@ class BM25Retriever:
         with open(path, 'wb') as f:
             pickle.dump(data, f)
 
-    def load(self, path: str = BM25_PATH):
+    def load(self, path: str):
         if os.path.exists(path):
             with open(path, 'rb') as f:
                 obj = pickle.load(f)
@@ -54,8 +53,3 @@ class BM25Retriever:
                 self.tokenizer = obj['tokenizer']
                 self.bm25 = obj['bm25']
         return True
-
-
-bm25_retriever = BM25Retriever()
-bm25_retriever.load()
-

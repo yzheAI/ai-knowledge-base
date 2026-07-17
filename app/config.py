@@ -12,6 +12,5 @@ RERANK_MODEL_PATH = "E:/Python_Projects/ai_knowledge_base/models/rerank"
 DEVICE = "cpu"
 SEARCH_TOP_K = 10
 RERANK_TOP_K = 3
-BM25_PATH = "E:/Python_Projects/ai_knowledge_base/app/data/bm25.pkl"
 JSON_PATH = "E:/Python_Projects/ai_knowledge_base/app/data/dataset.json"
 KNOWLEDGE_BASE_PATH = "data/knowledge_bases"

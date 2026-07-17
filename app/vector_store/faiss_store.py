@@ -2,7 +2,7 @@ import faiss
 import numpy as np
 import pickle
 import os
-from app.retriever.bm25 import bm25_retriever
+from app.retriever.bm25 import BM25Retriever
 
 
 # 封装FAISS，实现 存向量+存原文+搜相似文本
@@ -17,6 +17,8 @@ class VectorStore:
         self.next_id = 0  # 全局唯一ID分配器的状态变量,生成起点
         self.texts = []
 
+        self.bm25 = BM25Retriever()
+
     # 添加文本与向量
     def add(self, embeddings, texts, doc_id, metadata):
         embeddings = np.array(embeddings).astype("float32")  # 转成FAISS需要的格式
@@ -25,7 +27,7 @@ class VectorStore:
             embeddings = embeddings.reshape(1, -1)
 
         self.texts.extend(texts)
-        bm25_retriever.build(self.texts)
+        self.bm25.build(self.texts)
 
         # 索引范围
         ids = np.arange(self.next_id, self.next_id + len(texts))
@@ -94,8 +96,8 @@ class VectorStore:
 
         # 重建 BM25
         if self.texts:
-            bm25_retriever.build(self.texts)
-            bm25_retriever.save()
+            self.bm25.build(self.texts)
+            self.bm25.save()
 
     def delete(self, doc_id, kb_path):
         ids = []

@@ -2,8 +2,6 @@ import faiss
 import numpy as np
 import pickle
 import os
-
-from app.config import INDEX_PATH, TEXT_PATH
 from app.retriever.bm25 import bm25_retriever
 
 
@@ -74,16 +72,15 @@ class VectorStore:
 
         return results
 
-    def save(self, index_path=INDEX_PATH, texts_path=TEXT_PATH):
-        os.makedirs("data", exist_ok=True)
-        faiss.write_index(self.index, index_path)
-        with open(texts_path, "wb") as f:
+    def save(self, kb_path):
+        faiss.write_index(self.index, f"{kb_path}/faiss.index")
+        with open(f"{kb_path}/texts.pkl", "wb") as f:
             pickle.dump({
                 "data": self.data,
                 "next_id": self.next_id
             }, f)
 
-    def load(self, index_path=INDEX_PATH, texts_path=TEXT_PATH):
+    def load(self, index_path, texts_path):
         if os.path.exists(index_path):
             self.index = faiss.read_index(index_path)
 
@@ -100,7 +97,7 @@ class VectorStore:
             bm25_retriever.build(self.texts)
             bm25_retriever.save()
 
-    def delete(self, doc_id):
+    def delete(self, doc_id, kb_path):
         ids = []
         for chunk_id, item in self.data.items():
             if item["doc_id"] == doc_id:
@@ -114,9 +111,5 @@ class VectorStore:
         for chunk_id in ids:
             self.data.pop(chunk_id, None)  # None: chunk_id不存在时不报错
         # 保存索引
-        self.save()
+        self.save(kb_path)
         return True
-
-
-vector_store = VectorStore(768)
-vector_store.load()

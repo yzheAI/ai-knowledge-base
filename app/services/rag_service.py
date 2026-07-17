@@ -9,12 +9,13 @@ from app.config import SEARCH_TOP_K, RERANK_TOP_K
 memory = ConversationMemory()
 
 
-async def chat_service(query: str, filters: dict | None):
+async def chat_service(query: str, kb_name, filters: dict | None):
 
     history = build_history(memory)
 
     contexts = retrieve(
         query,
+        kb_name,
         search_top_k=SEARCH_TOP_K,
         rerank_top_k=RERANK_TOP_K,
         filters=filters,

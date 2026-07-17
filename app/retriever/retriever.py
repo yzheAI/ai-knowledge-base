@@ -1,22 +1,24 @@
 from app.embedding.embedding import get_embedding
 from app.retriever.rerank import rerank
-from app.vector_store.faiss_store import vector_store
+from app.core.container import vector_manager
 from app.retriever.bm25 import bm25_retriever
 
 
 def retrieve(
         query: str,
+        kb_path: str,
         search_top_k: int,
         rerank_top_k: int,
         filters=None,
 ):
+    store = vector_manager.get_store(kb_path)
     query_embedding = get_embedding(query)
     # 转换成 dict
     filter_dict = {}
     if filters:
         filter_dict = filters.model_dump(exclude_none=True)
     # FAISS
-    faiss_results = vector_store.search(
+    faiss_results = store.search(
         query_embedding,
         top_k=search_top_k,
         filters=filter_dict,
@@ -28,7 +30,7 @@ def retrieve(
     for hit in bm25_hits:
         idx = hit["index"]  # index：序号
 
-        item = vector_store.data.get(idx)
+        item = store.data.get(idx)
         if item:
             bm25_results.append({
                 "text": item["text"],

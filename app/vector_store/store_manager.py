@@ -23,6 +23,7 @@ class VectorStoreManager:
             store.load(
                 f"{kb_path}/faiss.index",
                 f"{kb_path}/texts.pkl",
+                kb_path
             )
 
             self.stores[kb_name] = store

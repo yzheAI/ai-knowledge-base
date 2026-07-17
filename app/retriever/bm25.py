@@ -36,16 +36,22 @@ class BM25Retriever:
             for idx, score in ranked[:top_k]
         ]
 
-    def save(self, path: str):
+    def save(self, kb_path: str):
         data = {
             "corpus": self.corpus,
             "tokenizer": self.tokenizer,
             "bm25": self.bm25
         }
+        path = os.path.join(
+            f"{kb_path}/bm25.pkl"
+        )
         with open(path, 'wb') as f:
             pickle.dump(data, f)
 
-    def load(self, path: str):
+    def load(self, kb_path: str):
+        path = os.path.join(
+            f"{kb_path}/bm25.pkl"
+        )
         if os.path.exists(path):
             with open(path, 'rb') as f:
                 obj = pickle.load(f)

@@ -11,6 +11,7 @@ class ChatResponse(BaseModel):
     query: str
     answer: str
     sources: list[SourceResponse]
+    kb_name: str
 
 
 class MetadataFilter(BaseModel):

@@ -11,6 +11,7 @@ chat_router = APIRouter(prefix="/chat", tags=["chat"])
 async def chat(request: ChatRequest):
     response = await chat_service(
         query=request.query,
+        kb_name=request.kb_name,
         filters=request.filters
     )
     return success(response)

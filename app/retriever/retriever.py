@@ -1,7 +1,6 @@
 from app.embedding.embedding import get_embedding
 from app.retriever.rerank import rerank
 from app.core.container import vector_manager
-from app.retriever.bm25 import bm25_retriever
 
 
 def retrieve(
@@ -25,7 +24,7 @@ def retrieve(
     )
 
     # BM25（用 index → 转回 text）
-    bm25_hits = bm25_retriever.search(query, top_k=search_top_k)
+    bm25_hits = store.bm25.search(query, top_k=search_top_k)
     bm25_results = []
     for hit in bm25_hits:
         idx = hit["index"]  # index：序号

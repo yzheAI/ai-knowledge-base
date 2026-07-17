@@ -82,7 +82,7 @@ class VectorStore:
                 "next_id": self.next_id
             }, f)
 
-    def load(self, index_path, texts_path):
+    def load(self, index_path, texts_path, kb_path):
         if os.path.exists(index_path):
             self.index = faiss.read_index(index_path)
 
@@ -97,7 +97,7 @@ class VectorStore:
         # 重建 BM25
         if self.texts:
             self.bm25.build(self.texts)
-            self.bm25.save()
+            self.bm25.save(f"{kb_path}/bm25.pkl")
 
     def delete(self, doc_id, kb_path):
         ids = []

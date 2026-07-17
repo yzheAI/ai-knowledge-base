@@ -10,6 +10,7 @@ class RetrieverEvaluator:
         recall_1 = 0
         recall_3 = 0
         recall_5 = 0
+        mrr = 0
 
         total = len(self.dataset)
 
@@ -37,11 +38,17 @@ class RetrieverEvaluator:
             ):
                 recall_5 += 1
 
+            for rank, r in enumerate(results, start=1):
+                if item["source"] == r["metadata"]["source"]:
+                    mrr += 1 / rank
+                    break
+
         return {
             "total": total,
             "recall_1": recall_1 / total,
             "recall_3": recall_3 / total,
-            "recall_5": recall_5 / total
+            "recall_5": recall_5 / total,
+            "MRR": mrr / total
         }
 
 

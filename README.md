@@ -22,6 +22,7 @@
 - 删除文档
 - 全局异常处理
 - 检索评估
+- MRR (Mean Reciprocal Rank)
 
 ## 技术栈
 - FastAPI

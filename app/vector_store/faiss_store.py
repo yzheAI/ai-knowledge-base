@@ -81,6 +81,7 @@ class VectorStore:
                 "data": self.data,
                 "next_id": self.next_id
             }, f)
+        self.bm25.save(kb_path)
 
     def load(self, index_path, texts_path, kb_path):
         if os.path.exists(index_path):
@@ -101,8 +102,9 @@ class VectorStore:
             self.bm25.load(kb_path)
 
         else:
-            self.bm25.build(self.texts)
-            self.bm25.save(kb_path)
+            if self.texts:
+                self.bm25.build(self.texts)
+                self.bm25.save(kb_path)
 
     def delete(self, doc_id, kb_path):
         ids = []
@@ -122,9 +124,9 @@ class VectorStore:
             item["text"]
             for item in self.data.values()
         ]
-
-        self.bm25.build(self.texts)
-        self.bm25.save(kb_path)
+        if self.texts:
+            self.bm25.build(self.texts)
+            self.bm25.save(kb_path)
 
         # 保存索引
         self.save(kb_path)

@@ -13,4 +13,4 @@ DEVICE = "cpu"
 SEARCH_TOP_K = 10
 RERANK_TOP_K = 3
 JSON_PATH = "E:/Python_Projects/ai_knowledge_base/app/data/dataset.json"
-KNOWLEDGE_BASE_PATH = "data/knowledge_bases"
+KNOWLEDGE_BASE_PATH = "E:/Python_Projects/ai_knowledge_base/data/knowledge_bases"

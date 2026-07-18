@@ -2,11 +2,11 @@ from app.retriever.retriever import retrieve
 
 
 class RetrieverAdapter:
-    def search(self, query, kb_path, top_k=5):
+    def search(self, query, kb_name, top_k=5):
 
         return retrieve(
             query=query,
-            kb_path=kb_path,
+            kb_name=kb_name,
             search_top_k=10,
             rerank_top_k=top_k
         )

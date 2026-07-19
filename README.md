@@ -15,15 +15,13 @@
 系统采用模块化 RAG（Retrieval Augmented Generation）架构，
 整体由文档处理层、知识库管理层、检索层和生成层组成。
 ```text
-                         User Query
-                              |
-                              |
-                       FastAPI API Layer
-                              |
-                              |
-                    +---------+---------+
-                    |                   |
-             Document Pipeline      Chat Pipeline
+                              User
+                               |
+                    +----------+----------+
+                    |                     |
+                 Upload                Query
+                    |                     |
+         Document Pipeline        Chat Pipeline
                     |                   |
         +-----------+                   |
         |                               |
@@ -113,11 +111,13 @@ FAISS Index  BM25 Index       FAISS Index  BM25 Index
 - rank-bm25
 - CrossEncoder
 - Retriever Evaluation 测试体系
+- Pydantic
 
 
 ## 5. 项目结构
 
 ```text
+
 app/
 ├── api/                 # API接口层
 ├── services/            # 业务逻辑
@@ -151,6 +151,10 @@ app/
 - metadata
 
 避免不同知识库之间的数据污染。
+
+VectorStoreManager 通过 kb_name 管理不同 VectorStore 实例，
+每个实例内部维护对应知识库自己的 FAISS Index、
+BM25 Index 和 Metadata 数据。
 
 
 ### 6.2 Hybrid Retrieval
@@ -246,9 +250,10 @@ uvicorn main:app --reload
 - [x] Retriever Recall Evaluation
 - [x] 多知识库管理
 - [x] 对话历史（Conversation Memory）
+- [ ] Docker 部署
+- [ ] Redis缓存与任务队列
+- [ ] MySQL元数据管理
 - [ ] Hybrid Score Fusion
-- [ ] 多路 Retriever
 - [ ] Elasticsearch 检索
 - [ ] Milvus / Chroma 向量数据库
-- [ ] Docker 部署
 - [ ] 前端页面

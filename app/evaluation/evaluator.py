@@ -43,27 +43,6 @@ class RetrieverEvaluator:
                 if item["source"] == r["metadata"]["source"]:
                     mrr += 1 / rank
                     break
-        # for item in self.dataset:
-        #     results = retriever.search(
-        #         item["question"],
-        #         kb_name=item["kb_name"],
-        #         top_k=5
-        #     )
-        #
-        #     print("================")
-        #     print("问题:", item["question"])
-        #     print("目标source:", item["source"])
-        #     print("结果数量:", len(results))
-        #
-        #     for r in results:
-        #         print(
-        #             "召回source:",
-        #             r["metadata"].get("source"),
-        #             "score:",
-        #             r.get("distance"),
-        #             "text:",
-        #             r["text"][:50]
-        #         )
 
         return {
             "total": total,

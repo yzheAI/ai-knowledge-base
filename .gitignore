@@ -1,10 +1,29 @@
 __pycache__/
 *.pyc
-data/uploads/
+
+# json
+app/data/dataset.json
+
+# Environment
 .env
+
+# IDE
 .idea/
 .vscode/
+
+# OS
 .DS_Store
-data/
+
+# Vector database generated files
+data/knowledge_bases/*/faiss.index
+data/knowledge_bases/*/texts.pkl
+data/knowledge_bases/*/bm25.pkl
+
+# User uploaded files
+data/knowledge_bases/*/files/
+
+# Temporary files
 temp.py
+
+# Local models
 models/

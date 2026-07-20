@@ -10,10 +10,20 @@ class BM25Store:
         self.tokenizer = []
         self.bm25 = None
 
-    def build(self, texts: list[str]):
-        self.corpus = texts
-        self.tokenizer = [list(jieba.cut(t)) for t in texts]  # 语句分词
-        self.bm25 = BM25Okapi(self.tokenizer)  # 初始化 BM25 模型，完成索引构建
+    def add_documents(self, texts: list[str]):
+        self.corpus.extend(texts)
+
+    def rebuild(self):
+        if not self.corpus:
+            self.bm25 = None
+            return
+        self.tokenizer = [
+            list(jieba.cut(t))
+            for t in self.corpus
+        ]
+        self.bm25 = BM25Okapi(
+            self.tokenizer
+        )
 
     def search(self, query: str, top_k: int = 5):
         if not self.bm25:

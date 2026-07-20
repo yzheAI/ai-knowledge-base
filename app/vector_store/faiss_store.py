@@ -27,14 +27,23 @@ class VectorStore:
             embeddings = embeddings.reshape(1, -1)
 
         self.texts.extend(texts)
-        self.bm25.build(self.texts)
+
+        self.bm25.add_documents(
+            texts
+        )
 
         # 索引范围
-        ids = np.arange(self.next_id, self.next_id + len(texts))
+        ids = np.arange(
+            self.next_id,
+            self.next_id + len(texts)
+        )
         self.next_id += len(texts)
 
         # index 添加向量和显式索引
-        self.index.add_with_ids(embeddings, ids)  # 存入 list[list[float]] 和 list[int]，每个向量对应一个序号
+        self.index.add_with_ids(
+            embeddings,
+            ids
+        ) # 存入 list[list[float]] 和 list[int]，每个向量对应一个序号
         for i, text in zip(ids, texts):
             # 使用字典，data[i]（i唯一）存放信息
             self.data[int(i)] = {
@@ -105,8 +114,12 @@ class VectorStore:
 
         else:
             if self.texts:
-                self.bm25.build(self.texts)
-                self.bm25.save(kb_path)
+                self.bm25.add_documents(
+                    self.texts
+                )
+                self.bm25.save(
+                    kb_path
+                )
 
     def delete(self, doc_id, kb_path):
         ids = []
@@ -127,7 +140,7 @@ class VectorStore:
             for item in self.data.values()
         ]
         if self.texts:
-            self.bm25.build(self.texts)
+            self.bm25.rebuild()
             self.bm25.save(kb_path)
 
         # 保存索引

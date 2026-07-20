@@ -33,6 +33,5 @@ class FaissRetriever(BaseRetriever):
             top_k,
             filters
         )
-        print("FAISS filters:", filters)
 
         return result

@@ -39,7 +39,7 @@ class BM25Retriever(BaseRetriever):
 
             if item is None:
                 continue
-            print("BM25 filters:", filters)
+
             if filters is not None:
                 matched = all(
                     item["metadata"].get(k) == v

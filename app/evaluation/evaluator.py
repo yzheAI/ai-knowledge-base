@@ -15,7 +15,7 @@ class RetrieverEvaluator:
         total = len(self.dataset)
 
         for item in self.dataset:
-            results = retriever.retrieve(
+            results = retriever.search(
                 item["question"],
                 kb_name=item["kb_name"],
                 top_k=5

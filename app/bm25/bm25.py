@@ -4,7 +4,7 @@ import os
 import pickle
 
 
-class BM25Retriever:
+class BM25Store:
     def __init__(self):
         self.corpus = []
         self.tokenizer = []
@@ -30,8 +30,10 @@ class BM25Retriever:
         )
         return [
             {
-                "bm25_score": float(score),
-                "index": idx
+                "chunk_id": int(idx),
+                "text": self.corpus[idx],
+                "score": float(score),
+                "source": "bm25",
             }
             for idx, score in ranked[:top_k]
         ]

@@ -2,10 +2,10 @@ from app.llm.qwen import chat_with_qwen
 from app.memory.conversation_memory import ConversationMemory
 from app.prompts.history_builder import build_history
 from app.prompts.rag_prompt import build_prompt
-from app.retriever.retriever import retrieve
+# from app.retriever.retriever import retrieve
 from app.schemas.chat import SourceResponse
 from app.config import SEARCH_TOP_K, RERANK_TOP_K
-
+from app.core.container import hybrid_retriever
 memory = ConversationMemory()
 
 
@@ -13,12 +13,12 @@ async def chat_service(query: str, kb_name, filters: dict | None):
 
     history = build_history(memory)
 
-    contexts = retrieve(
+    contexts = hybrid_retriever.retrieve(
         query,
         kb_name,
-        search_top_k=SEARCH_TOP_K,
-        rerank_top_k=RERANK_TOP_K,
-        filters=filters,
+        # search_top_k=SEARCH_TOP_K,
+        # rerank_top_k=RERANK_TOP_K,
+        # filters=filters,
     )
     content_text = "\n".join(
         [ctx["text"] for ctx in contexts]
@@ -38,7 +38,7 @@ async def chat_service(query: str, kb_name, filters: dict | None):
     sources = [
         SourceResponse(
             content=ctx["text"],
-            score=ctx["distance"],
+            score=ctx["score"],
             metadata=ctx["metadata"]
         )
         for ctx in contexts

@@ -1,0 +1,16 @@
+from abc import ABC, abstractmethod
+
+
+class BaseRetriever(ABC):
+    """
+    定义统一规范，不进行实际检索
+    提前发现错误
+    """
+    @abstractmethod
+    def retrieve(
+            self,
+            query: str,
+            kb_name: str,
+            top_k: int = 5
+    ) -> list[dict]:
+        pass

@@ -1,9 +1,8 @@
-from app.embedding.embedding import get_embedding
 from app.exceptions.exceptions import KnowledgeBaseEmptyError
 from app.retriever.base import BaseRetriever
 
 
-class FaissRetriever(BaseRetriever):
+class BM25Retriever(BaseRetriever):
     def __init__(
             self,
             vector_manager
@@ -12,8 +11,8 @@ class FaissRetriever(BaseRetriever):
 
     def retrieve(
             self,
-            query,
-            kb_name,
+            query: str,
+            kb_name: str,
             top_k=5
     ):
         store = self.vector_manager.get_store(
@@ -21,15 +20,11 @@ class FaissRetriever(BaseRetriever):
         )
 
         if store is None:
-            raise KnowledgeBaseEmptyError("知识库不存在")
+            raise KnowledgeBaseEmptyError(
+                "知识库不存在"
+            )
 
-        embedding = get_embedding(
-            query
-        )
-
-        result = store.search(
-            embedding,
+        return store.bm25.search(
+            query,
             top_k
         )
-
-        return result

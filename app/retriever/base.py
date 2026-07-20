@@ -11,6 +11,7 @@ class BaseRetriever(ABC):
             self,
             query: str,
             kb_name: str,
-            top_k: int = 5
+            top_k: int = 5,
+            filters: dict | None = None
     ) -> list[dict]:
         pass

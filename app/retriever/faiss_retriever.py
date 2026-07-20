@@ -14,7 +14,8 @@ class FaissRetriever(BaseRetriever):
             self,
             query,
             kb_name,
-            top_k=5
+            top_k=5,
+            filters=None
     ):
         store = self.vector_manager.get_store(
             kb_name
@@ -29,7 +30,9 @@ class FaissRetriever(BaseRetriever):
 
         result = store.search(
             embedding,
-            top_k
+            top_k,
+            filters
         )
+        print("FAISS filters:", filters)
 
         return result

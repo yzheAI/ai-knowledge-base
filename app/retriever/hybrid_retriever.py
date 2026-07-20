@@ -16,18 +16,21 @@ class HybridRetriever(BaseRetriever):
             self,
             query,
             kb_name,
-            top_k=5
+            top_k=5,
+            filters=None
     ):
         faiss_docs = self.faiss_retriever.retrieve(
             query,
             kb_name,
-            top_k
+            top_k,
+            filters
         )
 
         bm25_docs = self.bm25_retriever.retrieve(
             query,
             kb_name,
-            top_k
+            top_k,
+            filters
         )
 
         docs = self.merge(

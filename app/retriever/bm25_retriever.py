@@ -13,7 +13,8 @@ class BM25Retriever(BaseRetriever):
             self,
             query: str,
             kb_name: str,
-            top_k=5
+            top_k=5,
+            filters=None
     ):
         store = self.vector_manager.get_store(
             kb_name
@@ -24,7 +25,35 @@ class BM25Retriever(BaseRetriever):
                 "知识库不存在"
             )
 
-        return store.bm25.search(
+        hits = store.bm25.search(
             query,
             top_k
         )
+
+        results = []
+
+        for hit in hits:
+            idx = hit["chunk_id"]
+
+            item = store.data.get(idx)
+
+            if item is None:
+                continue
+            print("BM25 filters:", filters)
+            if filters is not None:
+                matched = all(
+                    item["metadata"].get(k) == v
+                    for k, v in filters.items()
+                )
+
+                if not matched:
+                    continue
+
+            results.append({
+                "text": item["text"],
+                "doc_id": item["doc_id"],
+                "distance": hit["score"],
+                "metadata": item["metadata"]
+            })
+
+        return results

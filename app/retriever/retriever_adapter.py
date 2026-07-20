@@ -1,14 +1,13 @@
-from app.retriever.retriever import retrieve
+from app.core.container import hybrid_retriever
 
 
 class RetrieverAdapter:
     def search(self, query, kb_name, top_k=5):
 
-        return retrieve(
+        return hybrid_retriever.retrieve(
             query=query,
             kb_name=kb_name,
-            search_top_k=10,
-            rerank_top_k=top_k
+            top_k=top_k
         )
 
 

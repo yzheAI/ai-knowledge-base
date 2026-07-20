@@ -2,9 +2,7 @@ from app.llm.qwen import chat_with_qwen
 from app.memory.conversation_memory import ConversationMemory
 from app.prompts.history_builder import build_history
 from app.prompts.rag_prompt import build_prompt
-# from app.retriever.retriever import retrieve
 from app.schemas.chat import SourceResponse
-from app.config import SEARCH_TOP_K, RERANK_TOP_K
 from app.core.container import hybrid_retriever
 memory = ConversationMemory()
 

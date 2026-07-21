@@ -6,21 +6,39 @@ import pickle
 
 class BM25Store:
     def __init__(self):
-        self.corpus = []
+        self.corpus = {}
         self.tokenizer = []
         self.bm25 = None
+        self.ids = []
 
-    def add_documents(self, texts: list[str]):
-        self.corpus.extend(texts)
+    def add_documents(
+            self,
+            documents: list[dict]
+    ):
+        for doc in documents:
+            self.corpus[
+                doc["chunk_id"]
+            ] = doc["text"]
 
     def rebuild(self):
         if not self.corpus:
             self.bm25 = None
             return
+
+        self.ids = list(
+            self.corpus.keys()
+        )
+
+        texts = [
+            self.corpus[i]
+            for i in self.ids
+        ]
+
         self.tokenizer = [
             list(jieba.cut(t))
-            for t in self.corpus
+            for t in texts
         ]
+
         self.bm25 = BM25Okapi(
             self.tokenizer
         )
@@ -40,8 +58,8 @@ class BM25Store:
         )
         return [
             {
-                "chunk_id": int(idx),
-                "text": self.corpus[idx],
+                "chunk_id": self.ids[idx],
+                "text": self.corpus[self.ids[idx]],
                 "score": float(score),
                 "source": "bm25",
             }
@@ -52,6 +70,7 @@ class BM25Store:
         data = {
             "corpus": self.corpus,
             "tokenizer": self.tokenizer,
+            "ids": self.ids,
             "bm25": self.bm25
         }
         path = os.path.join(
@@ -67,7 +86,10 @@ class BM25Store:
         if os.path.exists(path):
             with open(path, 'rb') as f:
                 obj = pickle.load(f)
+
+                print("BM25 keys:", obj.keys())
                 self.corpus = obj['corpus']
                 self.tokenizer = obj['tokenizer']
                 self.bm25 = obj['bm25']
+                self.ids = obj['ids']
         return True

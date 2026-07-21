@@ -53,6 +53,7 @@ class BM25Retriever(BaseRetriever):
                 "text": item["text"],
                 "doc_id": item["doc_id"],
                 "distance": hit["score"],
+                "chunk_id": hit["chunk_id"],
                 "metadata": item["metadata"]
             })
 

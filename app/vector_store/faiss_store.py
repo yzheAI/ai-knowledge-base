@@ -28,16 +28,28 @@ class VectorStore:
 
         self.texts.extend(texts)
 
-        self.bm25.add_documents(
-            texts
-        )
-
         # 索引范围
         ids = np.arange(
             self.next_id,
             self.next_id + len(texts)
         )
         self.next_id += len(texts)
+
+        documents = []
+
+        for i, text in zip(ids, texts):
+            documents.append(
+                {
+                    "chunk_id": int(i),
+                    "text": text
+                }
+            )
+
+        self.bm25.add_documents(
+            documents
+        )
+
+        self.bm25.rebuild()
 
         # index 添加向量和显式索引
         self.index.add_with_ids(
@@ -113,10 +125,23 @@ class VectorStore:
             self.bm25.load(kb_path)
 
         else:
-            if self.texts:
+            if self.data:
+                documents = []
+
+                for chunk_id, item in self.data.items():
+                    documents.append(
+                        {
+                            "chunk_id": int(chunk_id),
+                            "text": item["text"],
+                        }
+                    )
+
                 self.bm25.add_documents(
-                    self.texts
+                    documents
                 )
+
+                self.bm25.rebuild()
+
                 self.bm25.save(
                     kb_path
                 )
@@ -140,6 +165,10 @@ class VectorStore:
             for item in self.data.values()
         ]
         if self.texts:
+            self.bm25.corpus = {
+                chunk_id: item["text"]
+                for chunk_id, item in self.data.items()
+            }
             self.bm25.rebuild()
             self.bm25.save(kb_path)
 

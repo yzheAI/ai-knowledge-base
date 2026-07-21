@@ -22,25 +22,25 @@ class RetrieverEvaluator:
             )
 
             if any(
-                item["source"] == r["metadata"]["source"]
+                item["chunk_id"] == r["chunk_id"]
                 for r in results[:1]
             ):
                 recall_1 += 1
 
             if any(
-                item["source"] == r["metadata"]["source"]
+                item["chunk_id"] == r["chunk_id"]
                 for r in results[:3]
             ):
                 recall_3 += 1
 
             if any(
-                item["source"] == r["metadata"]["source"]
+                item["chunk_id"] == r["chunk_id"]
                 for r in results[:5]
             ):
                 recall_5 += 1
 
             for rank, r in enumerate(results, start=1):
-                if item["source"] == r["metadata"]["source"]:
+                if item["chunk_id"] == r["chunk_id"]:
                     mrr += 1 / rank
                     break
 

@@ -43,7 +43,7 @@ def split_sentence(paragraph: str):
     ]
 
 
-def sentences_merge(sentences: list[str], chunk_size: int = 500):
+def sentences_merge(sentences: list[str], chunk_size: int = 200):
     chunks = []
 
     current = ""
@@ -68,16 +68,26 @@ def sentences_merge(sentences: list[str], chunk_size: int = 500):
 def add_overlap(chunks, overlap_size: int):
     result = []
     for i, chunk in enumerate(chunks):
+
         if i == 0:
             result.append(chunk)
         else:
             pre = chunks[i - 1]
-            overlap = pre[-overlap_size:]
-            result.append(overlap + chunk)
+
+            sentences = split_sentence(pre)
+
+            overlap = "".join(
+                sentences[-overlap_size:]
+            )
+
+            result.append(
+                overlap + chunk
+            )
+
     return result
 
 
-def split_text(text: str, chunk_size: int = 500, overlap_size: int = 100):
+def split_text(text: str, chunk_size: int = 200, overlap_size: int = 50):
     paragraphs = split_paragraph(text)
     all_sentences = []
     for paragraph in paragraphs:

@@ -1,26 +1,75 @@
-from sentence_transformers import CrossEncoder
+import torch
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from app.config import RERANK_MODEL_PATH, DEVICE
+
+
 rerank_model = None
+tokenizer = None
 
 
 def get_rerank_model():
-    global rerank_model
+
+    global rerank_model, tokenizer
+
     if rerank_model is None:
-        rerank_model = CrossEncoder(
+        tokenizer = AutoTokenizer.from_pretrained(
             RERANK_MODEL_PATH,
-            device=DEVICE
+            use_fast=False
         )
-    return rerank_model
+
+        rerank_model = AutoModelForSequenceClassification.from_pretrained(
+            RERANK_MODEL_PATH
+        )
+
+        rerank_model.to(DEVICE)
+
+        rerank_model.eval()
+
+    return tokenizer, rerank_model
 
 
-def rerank(query: str, docs: list[dict], top_k: int = 3):
-    model = get_rerank_model()
-    # 构建二元组(query, doc["text"])
-    pairs = [(query, doc["text"]) for doc in docs]
-    # 计算并取出scores
-    scores = model.predict(pairs)
-    # 为docs[i]内部的字典新增一个键值对，新增分数字段
+def rerank(query, docs, top_k=5):
+
+    tokenizer, model = get_rerank_model()
+
+
+    pairs = [
+        (query, doc["text"])
+        for doc in docs
+    ]
+
+    scores = []
+
+    with torch.no_grad():
+
+        for q, text in pairs:
+
+            inputs = tokenizer(
+                q,
+                text,
+                padding=True,
+                truncation=True,
+                return_tensors="pt"
+            )
+
+            inputs = {
+                k: v.to(DEVICE)
+                for k, v in inputs.items()
+            }
+
+            outputs = model(**inputs)
+
+            score = outputs.logits[0].item()
+
+            scores.append(score)
+
     for i, score in enumerate(scores):
         docs[i]["rerank_score"] = float(score)
-    docs = sorted(docs, key=lambda x: x["rerank_score"], reverse=True)
+
+    docs = sorted(
+        docs,
+        key=lambda x:x["rerank_score"],
+        reverse=True
+    )
+
     return docs[:top_k]

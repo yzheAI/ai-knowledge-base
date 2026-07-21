@@ -86,8 +86,6 @@ class BM25Store:
         if os.path.exists(path):
             with open(path, 'rb') as f:
                 obj = pickle.load(f)
-
-                print("BM25 keys:", obj.keys())
                 self.corpus = obj['corpus']
                 self.tokenizer = obj['tokenizer']
                 self.bm25 = obj['bm25']

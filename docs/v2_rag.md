@@ -1,38 +1,58 @@
-## v2_rag.md
+# v2_rag.md
+
+## 1. Overview
+
+v2版本在基础 RAG 系统上进行了升级，引入
+- Multi Knowledge Base
+- Hybrid Retrieval
+- BM25 Key Retrieval
+- CrossEncoder Rerank
+- Retriever Evaluation
+
+整体实现从简单向量检索升级为完整 RAG Pipeline。
+
+## Overall Architecture
 ```mermaid
 graph TD
-A[User Query + Knowledge Base] --> B[FastAPI Chat API]
+A[User Query] --> B[FastAPI Chat API]
 
 B --> C[RAG Service]
 
-C --> D[VectorStoreManager]
+C --> D[KnowledgeBase Selector]
 
-D --> E[Load Knowledge Base Instance]
+D --> E[VectorStoreManager]
 
-E --> F1[FAISS Vector Store]
-E --> F2[BM25 Index]
+E --> F[Load Knowledge Base Instance]
 
-
-C --> G[Query Embedding]
-
-G --> F1
-
-F1 --> H1[Semantic TopK Retrieval]
-
-F2 --> H2[Keyword TopK Retrieval]
+F --> G1[FAISS Vector Index]
+F --> G2[BM25 Keyword Index]
 
 
-H1 --> I[Hybrid Retrieval Merge]
+C --> H[Query Processing]
 
-H2 --> I
+H --> I1[Embedding Model]
+
+H --> I2[Jieba Tokenization]
+
+I1 --> G1
+
+I2 --> G2
+
+G1 --> J1[Semantic Retrieval]
+
+G2 --> J2[Keyword Retrieval]
+
+J1 --> K[Hybrid Merge]
+
+J2 --> K
 
 
-I --> J[Deduplication]
+K --> L[Deduplication]
 
-J --> K[CrossEncoder Rerank]
+L --> M[CrossEncoder Reranker]
 
-K --> L[Context Construction]
+M --> N[Top-k Context]
 
-L --> M[Qwen LLM]
+N --> O[Qwen LLM]
 
-M --> N[Answer + Source Tracking]
+O --> P[Answer + Source Tracking]

@@ -1,6 +1,3 @@
-from app.core.container import hybrid_retriever
-
-
 class RetrieverAdapter:
     def __init__(self, retriever):
         self.retriever = retriever

@@ -1,4 +1,4 @@
-from app.config import KNOWLEDGE_BASE_PATH
+from app.config import KNOWLEDGE_BASE_PATH, EMBEDDING_DIM
 from app.knowledge_base.manager import KnowledgeManager
 from app.vector_store.faiss_store import VectorStore
 
@@ -14,7 +14,7 @@ class VectorStoreManager:
 
         if kb_name not in self.stores:
 
-            store = VectorStore(768)
+            store = VectorStore(EMBEDDING_DIM)
 
             kb_path = self.kb_manager.get_path(
                 kb_name=kb_name

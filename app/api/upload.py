@@ -1,12 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, Query, Form
-from app.config import UPLOAD_DIR
 from app.services.upload_service import upload, search_files, get_all_files, file_delete
 from utils.response import success
-import os
 
 
 upload_router = APIRouter(prefix="/files", tags=["文件上传"])
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @upload_router.post('/')

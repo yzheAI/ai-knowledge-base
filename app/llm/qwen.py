@@ -9,7 +9,7 @@ client = OpenAI(
 )
 
 
-def chat_with_qwen(prompt: str):
+def chat_with_qwen_stream(prompt: str):
     try:
         response = client.chat.completions.create(
             model="qwen-plus",
@@ -18,9 +18,15 @@ def chat_with_qwen(prompt: str):
                     "role": "user",
                     "content": prompt,
                 }
-            ]
+            ],
+            stream=True
         )
-        return response.choices[0].message.content
+        for chunk in response:
+            delta = chunk.choices[0].delta.content
+
+            if delta:
+                yield delta
+
     except APITimeoutError:
         raise LLMTimeoutError()
     except APIError:

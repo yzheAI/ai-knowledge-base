@@ -1,4 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Query, Form
+
+from app.schemas.response_schema import ResponseModel
 from app.services.upload_service import upload, search_files, get_all_files, file_delete
 from utils.response import success
 
@@ -6,7 +8,7 @@ from utils.response import success
 upload_router = APIRouter(prefix="/files", tags=["文件上传"])
 
 
-@upload_router.post('/')
+@upload_router.post('/', response_model=ResponseModel)
 async def upload_file(
         file: UploadFile = File(...),
         kb_name: str = Form(...)
@@ -20,7 +22,7 @@ async def upload_file(
     return success(result)
 
 
-@upload_router.post('/search')
+@upload_router.post('/search', response_model=ResponseModel)
 async def read_file(
         query: str = Query(...),
         kb_name: str = Query()
@@ -32,13 +34,13 @@ async def read_file(
     return success(msg=result)
 
 
-@upload_router.get('/files_message')
+@upload_router.get('/files_message', response_model=ResponseModel)
 async def get_files(kb_name):
     result = await get_all_files(kb_name)
     return success(msg=result)
 
 
-@upload_router.delete("/{doc_id}")
+@upload_router.delete("/{doc_id}", response_model=ResponseModel)
 async def delete_file(doc_id: str, kb_name: str):
     await file_delete(doc_id, kb_name)
     return success(msg="删除成功")

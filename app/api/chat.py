@@ -1,17 +1,21 @@
 from fastapi import APIRouter
-
-from app.schemas.chat import ChatRequest
-from app.services.rag_service import chat_service
+from fastapi.responses import StreamingResponse
+from app.schemas.chat import ChatRequest, ChatResponse
+from app.schemas.response_schema import ResponseModel
+from app.services.rag_service import chat_service_stream
 from utils.response import success
 
 chat_router = APIRouter(prefix="/chat", tags=["chat"])
 
 
-@chat_router.post("/chat")
+@chat_router.post("/chat/stream")
 async def chat(request: ChatRequest):
-    response = await chat_service(
-        query=request.query,
-        kb_name=request.kb_name,
-        filters=request.filters
+    return StreamingResponse(
+        chat_service_stream(
+            query=request.query,
+            kb_name=request.kb_name,
+            filters=request.filters
+        ),
+        media_type="text/event-stream",
     )
-    return success(response)
+

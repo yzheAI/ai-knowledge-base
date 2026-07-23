@@ -6,7 +6,7 @@ from app.config import SEARCH_TOP_K, KNOWLEDGE_BASE_PATH
 from app.document.pipeline import process_document
 from app.embedding.embedding import get_embedding
 from app.exceptions.exceptions import DocumentNotFound, KnowledgeBaseEmptyError
-from app.core.container import vector_manager
+from app.core.container import container
 
 
 async def upload(file, kb_name):
@@ -38,7 +38,7 @@ async def upload(file, kb_name):
     })
 
     doc_id = str(uuid.uuid4())
-    store = vector_manager.get_store(
+    store = container.vector_manager.get_store(
         kb_name
     )
     store.add(
@@ -57,7 +57,7 @@ async def upload(file, kb_name):
 
 
 async def search_files(query: str, kb_name):
-    store = vector_manager.get_store(
+    store = container.vector_manager.get_store(
         kb_name
     )
 
@@ -75,7 +75,7 @@ async def search_files(query: str, kb_name):
 
 async def get_all_files(kb_name):
     docs = {}
-    store = vector_manager.get_store(kb_name)
+    store = container.vector_manager.get_store(kb_name)
 
     for item in store.data.values():
 
@@ -98,7 +98,7 @@ async def get_all_files(kb_name):
 
 async def file_delete(doc_id, kb_name):
     kdg = KnowledgeManager(KNOWLEDGE_BASE_PATH)
-    store = vector_manager.get_store(kb_name)
+    store = container.vector_manager.get_store(kb_name)
     kb_path = kdg.get_path(kb_name)
     success_flag = store.delete(doc_id, kb_path)
     if not success_flag:

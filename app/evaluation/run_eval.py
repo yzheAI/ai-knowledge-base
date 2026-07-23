@@ -4,7 +4,7 @@ import json
 from app.evaluation.evaluator import RetrieverEvaluator
 from app.config import JSON_PATH, SAVE_JSON_PATH
 from app.retriever.retriever_adapter import RetrieverAdapter
-from app.core.container import faiss_retriever, bm25_retriever, hybrid_retriever
+from app.core.container import container
 
 
 evaluator = RetrieverEvaluator(
@@ -12,15 +12,15 @@ evaluator = RetrieverEvaluator(
 )
 
 f_retriever = RetrieverAdapter(
-    faiss_retriever,
+    container.faiss_retriever,
 )
 
 b_retriever = RetrieverAdapter(
-    bm25_retriever,
+    container.bm25_retriever,
 )
 
 h_b_retriever = RetrieverAdapter(
-    hybrid_retriever,
+    container.hybrid_retriever,
 )
 
 result_faiss = evaluator.evaluate(

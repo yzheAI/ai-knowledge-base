@@ -1,12 +1,12 @@
-from app.core.container import vector_manager
+from app.core.container import container
 from app.embedding.embedding import get_embedding
 
 
 def test_multi_kb_isolation():
-    copper_store = vector_manager.get_store(
+    copper_store = container.vector_manager.get_store(
         "copper_based"
     )
-    medical_store = vector_manager.get_store(
+    medical_store = container.vector_manager.get_store(
         "medical"
     )
 
@@ -14,10 +14,10 @@ def test_multi_kb_isolation():
 
 
 def test_multi_kb_data_isolation():
-    copper_store = vector_manager.get_store(
+    copper_store = container.vector_manager.get_store(
         "copper_based"
     )
-    medical_store = vector_manager.get_store(
+    medical_store = container.vector_manager.get_store(
         "medical"
     )
 

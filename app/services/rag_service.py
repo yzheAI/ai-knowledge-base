@@ -4,7 +4,7 @@ from app.memory.conversation_memory import ConversationMemory
 from app.prompts.history_builder import build_history
 from app.prompts.rag_prompt import build_prompt
 from app.schemas.chat import SourceResponse
-from app.core.container import hybrid_retriever
+from app.core.container import container
 memory = ConversationMemory()
 
 
@@ -17,7 +17,7 @@ async def chat_service(query: str, kb_name, filters=None):
             exclude_none=True
         )
 
-    contexts = hybrid_retriever.retrieve(
+    contexts = container.hybrid_retriever.retrieve(
         query,
         kb_name,
         top_k=SEARCH_TOP_K,

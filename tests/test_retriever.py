@@ -1,8 +1,8 @@
-from app.core.container import faiss_retriever, bm25_retriever, hybrid_retriever
+from app.core.container import container
 
 
 def test_faiss_retriever():
-    results = faiss_retriever.retrieve(
+    results = container.faiss_retriever.retrieve(
         query="铜基复合材料是什么？",
         kb_name="copper_based",
         top_k=5
@@ -17,7 +17,7 @@ def test_faiss_retriever():
 
 
 def test_bm25_retriever():
-    results = bm25_retriever.retrieve(
+    results = container.bm25_retriever.retrieve(
         query="铜基复合材料是什么？",
         kb_name="copper_based",
         top_k=5
@@ -27,12 +27,12 @@ def test_bm25_retriever():
 
     item = results[0]
     assert "text" in item
-    assert "score" in item
+    assert "distance" in item
     assert "chunk_id" in item
 
 
 def test_hybrid_retriever():
-    results = hybrid_retriever.retrieve(
+    results = container.hybrid_retriever.retrieve(
         query="铜基复合材料是什么？",
         kb_name="copper_based",
         top_k=5

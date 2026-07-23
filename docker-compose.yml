@@ -1,0 +1,21 @@
+# 一组容器服务
+services:
+
+  rag-api:
+    # 使用当前目录的 Dockerfile 构建镜像
+    build: .
+
+    container_name: ai-rag
+
+    ports:
+      - "8000:8000"
+
+    # 宿主机路径 : 容器内路径
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    # 环境变量注入容器
+    env_file:
+      - .env
+
+    restart: always

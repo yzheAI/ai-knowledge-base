@@ -1,30 +1,30 @@
 import os
+from app.crud import knowledge_base
 
 
 class KnowledgeManager:
     def __init__(self, base_path):
         self.base_path = base_path
 
-    def create(self, kb_name):
-        kb_path = os.path.join(
-            self.base_path,
-            kb_name
+    def create(
+            self,
+            db,
+            name,
+            description=None,
+    ):
+        kb = knowledge_base.create_kb(
+            db,
+            name,
+            description,
         )
 
-        os.makedirs(
-            kb_path,
-            exist_ok=True
-        )
+        return kb
 
-        return kb_path
-
-    def get_path(self, kb_name):
+    def get_path(self, kb_id):
         return os.path.join(
             self.base_path,
-            kb_name
+            kb_id
         )
 
-    def list(self):
-        if not os.path.exists(self.base_path):
-            return []
-        return os.listdir(self.base_path)
+    def list(self, db):
+        return knowledge_base.get_all_kbs(db)

@@ -1,5 +1,7 @@
-from fastapi import APIRouter, UploadFile, File, Query, Form
+from fastapi import APIRouter, UploadFile, File, Query, Form, Depends
+from requests import Session
 
+from app.database.session import Base, get_db
 from app.schemas.response_schema import ResponseModel
 from app.services.upload_service import upload, search_files, get_all_files, file_delete
 from utils.response import success
@@ -10,11 +12,13 @@ upload_router = APIRouter(prefix="/files", tags=["文件上传"])
 
 @upload_router.post('/', response_model=ResponseModel)
 async def upload_file(
+        db: Session = Depends(get_db),
         file: UploadFile = File(...),
         kb_name: str = Form(...)
 ):  # 表示文件上传类型，参数必须传
     # 上传文档
     result = await upload(
+        db,
         file,
         kb_name
     )

@@ -9,10 +9,10 @@ from app.exceptions.exceptions import DocumentNotFound, KnowledgeBaseEmptyError
 from app.core.container import container
 
 
-async def upload(file, kb_name):
+async def upload(db, file, kb_name):
     # 定义路径
     kdg = KnowledgeManager(KNOWLEDGE_BASE_PATH)
-    kb_path = kdg.create(kb_name)
+    kb_path = kdg.create(db, kb_name)
     upload_dir = os.path.join(
         kb_path,
         "files"
